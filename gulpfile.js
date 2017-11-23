@@ -4,6 +4,8 @@ var autoprefixer = require('gulp-autoprefixer');
 var uglify = require('gulp-uglify');
 var browserSync = require('browser-sync').create();
 var pump = require('pump');
+var concat = require('gulp-concat');
+var minifyhtml = require('gulp-minify-html');
 
 gulp.task('serve', ['sass', 'js'], function() {
     browserSync.init({
@@ -14,7 +16,15 @@ gulp.task('serve', ['sass', 'js'], function() {
 
     gulp.watch("assets/scss/*.scss", ['sass']);
     gulp.watch("assets/js/*.js", ['js']);
-    gulp.watch(["app/**/*.html"]).on("change", browserSync.reload);
+    gulp.watch(["app/**/*.html"], ['html']).on("change", browserSync.reload);
+});
+
+gulp.task('html', function(cb) {
+    /*pump([
+        gulp.src("app/!**!/!*.html"),
+        minifyhtml(),
+        gulp.dest("app/")
+    ], cb);*/
 });
 
 gulp.task("sass", function(cb) {
@@ -38,9 +48,10 @@ gulp.task("sass", function(cb) {
 
 gulp.task("js", function(cb) {
     pump([
-        gulp.src("assets/js/*.js"),
+        gulp.src('assets/js/*.js'),
+        concat('app.js'),
         uglify(),
-        gulp.dest("app/js"),
+        gulp.dest('app/js'),
         browserSync.stream()
     ], cb);
 });
