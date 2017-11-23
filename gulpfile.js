@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
 var uglify = require('gulp-uglify');
 var browserSync = require('browser-sync').create();
 var pump = require('pump');
@@ -17,8 +18,15 @@ gulp.task('serve', ['sass', 'js'], function() {
 });
 
 gulp.task("sass", function(cb) {
+    // [Why use Pump?](https://github.com/terinjokes/gulp-uglify/blob/master/docs/why-use-pump/README.md#why-use-pump)
     pump([
         gulp.src("assets/scss/*.scss"),
+        autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }),
+        // https://www.npmjs.com/package/gulp-sass
+        // https://www.npmjs.com/package/node-reset-scss
         sass({
             outputStyle: 'compressed',
             includePaths: require('node-reset-scss').includePath
